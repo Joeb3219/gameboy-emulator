@@ -41,6 +41,9 @@ struct cpu_registers{
 		};
 		unsigned short af;
 	};
+	unsigned short pc;
+	unsigned short sp;
+	unsigned short flags;
 };
 
 struct cpu_cpu{
