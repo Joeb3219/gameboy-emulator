@@ -67,6 +67,92 @@ Status fn_dec_bc(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_dec_de(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_dec_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_dec_sp(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ldi_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hli_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_add_hl_bc(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_add_hl_de(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_add_hl_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_add_hl_sp(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_f_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
@@ -74,48 +160,48 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD (BC),A", 0, NULL},
 	{"INC BC", 0, NULL},
 	{"INC B", 0, NULL},
-	{"DEC B", 0, NULL},
-	{"LD B,n", 1, NULL},
+	{"DEC B", 0, fn_dec_b},
+	{"LD B,n", 1, fn_ld_b_n},
 	{"RLC A", 0, NULL},
 	{"LD (nn),SP", 2, NULL},
-	{"ADD HL,BC", 0, NULL},
+	{"ADD HL,BC", 0, fn_add_hl_bc},
 	{"LD A,(BC)", 0, NULL},
 	{"DEC BC", 0, fn_dec_bc},
 	{"INC C", 0, NULL},
-	{"DEC C", 0, NULL},
-	{"LD C,n", 1, NULL},
+	{"DEC C", 0, fn_dec_c},
+	{"LD C,n", 1, fn_ld_c_n},
 	{"RRC A", 0, NULL},
 	{"STOP", 0, NULL},
 	{"LD DE,nn", 2, NULL},
 	{"LD (DE),A", 0, NULL},
 	{"INC DE", 0, NULL},
 	{"INC D", 0, NULL},
-	{"DEC D", 0, NULL},
-	{"LD D,n", 1, NULL},
+	{"DEC D", 0, fn_dec_d},
+	{"LD D,n", 1, fn_ld_d_n},
 	{"RL A", 0, NULL},
 	{"JR n", 1, NULL},
-	{"ADD HL,DE", 0, NULL},
+	{"ADD HL,DE", 0, fn_add_hl_de},
 	{"LD A,(DE)", 0, NULL},
 	{"DEC DE", 0, fn_dec_bc},
 	{"INC E", 0, NULL},
-	{"DEC E", 0, NULL},
-	{"LD E,n", 1, NULL},
+	{"DEC E", 0, fn_dec_e},
+	{"LD E,n", 1, fn_ld_e_n},
 	{"RR A", 0, NULL},
 	{"JR NZ,n", 1, NULL},
 	{"LD HL,nn", 2, NULL},
-	{"LDI (HL),A", 0, NULL},
+	{"LDI (HL),A", 0, fn_ldi_hl_a},
 	{"INC HL", 0, NULL},
 	{"INC H", 0, NULL},
-	{"DEC H", 0, NULL},
-	{"LD H,n", 1, NULL},
+	{"DEC H", 0, fn_dec_h},
+	{"LD H,n", 1, fn_ld_h_n},
 	{"DAA", 0, NULL},
 	{"JR Z,n", 1, NULL},
-	{"ADD HL,HL", 0, NULL},
+	{"ADD HL,HL", 0, fn_add_hl_hl},
 	{"LDI A,(HL)", 0, NULL},
 	{"DEC HL", 0, fn_dec_hl},
 	{"INC L", 0, NULL},
-	{"DEC L", 0, NULL},
-	{"LD L,n", 1, NULL},
+	{"DEC L", 0, fn_dec_l},
+	{"LD L,n", 1, fn_ld_l_n},
 	{"CPL", 0, fn_cpl},
 	{"JR NC,n", 1, NULL},
 	{"LD SP,nn", 2, NULL},
@@ -126,19 +212,19 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD (HL),n", 1, NULL},
 	{"SCF", 0, NULL},
 	{"JR C,n", 1, NULL},
-	{"ADD HL,SP", 0, NULL},
+	{"ADD HL,SP", 0, fn_add_hl_sp},
 	{"LDD A,(HL)", 0, NULL},
 	{"DEC SP", 0, fn_dec_sp},
 	{"INC A", 0, NULL},
-	{"DEC A", 0, NULL},
-	{"LD A,n", 0, NULL},
+	{"DEC A", 0, fn_dec_a},
+	{"LD A,n", 0, fn_ld_a_n},
 	{"CCF", 0, NULL},
-	{"LD B,C", 0, NULL},
-	{"LD B,B", 0, NULL},
-	{"LD B,D", 0, NULL},
-	{"LD B,E", 0, NULL},
-	{"LD B,H", 0, NULL},
-	{"LD B,L", 0, NULL},
+	{"LD B,C", 0, fn_ld_b_c},
+	{"LD B,B", 0, fn_ld_b_b},
+	{"LD B,D", 0, fn_ld_b_d},
+	{"LD B,E", 0, fn_ld_b_e},
+	{"LD B,H", 0, fn_ld_b_h},
+	{"LD B,L", 0, fn_ld_b_l},
 	{"LD B,(HL)", 0, NULL},
 	{"LD B,A", 0, NULL},
 	{"LD C,B", 0, fn_ld_c_b},
@@ -149,38 +235,38 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD C,L", 0, fn_ld_c_l},
 	{"LD C,(HL)", 0, NULL},
 	{"LD C,A", 0, NULL},
-	{"LD D,B", 0, NULL},
-	{"LD D,C", 0, NULL},
-	{"LD D,D", 0, NULL},
-	{"LD D,E", 0, NULL},
-	{"LD D,H", 0, NULL},
-	{"LD D,L", 0, NULL},
+	{"LD D,B", 0, fn_ld_d_b},
+	{"LD D,C", 0, fn_ld_d_c},
+	{"LD D,D", 0, fn_ld_d_d},
+	{"LD D,E", 0, fn_ld_d_e},
+	{"LD D,H", 0, fn_ld_d_h},
+	{"LD D,L", 0, fn_ld_d_l},
 	{"LD D,(HL)", 0, NULL},
-	{"LD D,A", 0, NULL},
-	{"LD E,B", 0, NULL},
-	{"LD E,C", 0, NULL},
-	{"LD E,D", 0, NULL},
-	{"LD E,E", 0, NULL},
-	{"LD E,H", 0, NULL},
-	{"LD E,L", 0, NULL},
+	{"LD D,A", 0, fn_ld_d_a},
+	{"LD E,B", 0, fn_ld_e_b},
+	{"LD E,C", 0, fn_ld_e_c},
+	{"LD E,D", 0, fn_ld_e_d},
+	{"LD E,E", 0, fn_ld_e_e},
+	{"LD E,H", 0, fn_ld_e_h},
+	{"LD E,L", 0, fn_ld_e_l},
 	{"LD E,(HL)", 0, NULL},
-	{"LD E,A", 0, NULL},
-	{"LD H,B", 0, NULL},
-	{"LD H,C", 0, NULL},
-	{"LD H,D", 0, NULL},
-	{"LD H,E", 0, NULL},
-	{"LD H,H", 0, NULL},
-	{"LD H,L", 0, NULL},
+	{"LD E,A", 0, fn_ld_e_a},
+	{"LD H,B", 0, fn_ld_h_b},
+	{"LD H,C", 0, fn_ld_h_c},
+	{"LD H,D", 0, fn_ld_h_d},
+	{"LD H,E", 0, fn_ld_h_e},
+	{"LD H,H", 0, fn_ld_h_h},
+	{"LD H,L", 0, fn_ld_h_l},
 	{"LD H,(HL)", 0, NULL},
-	{"LD H,A", 0, NULL},
-	{"LD L,B", 0, NULL},
-	{"LD L,C", 0, NULL},
-	{"LD L,D", 0, NULL},
-	{"LD L,E", 0, NULL},
-	{"LD L,H", 0, NULL},
-	{"LD L,L", 0, NULL},
+	{"LD H,A", 0, fn_ld_h_a},
+	{"LD L,B", 0, fn_ld_l_b},
+	{"LD L,C", 0, fn_ld_l_c},
+	{"LD L,D", 0, fn_ld_l_d},
+	{"LD L,E", 0, fn_ld_l_e},
+	{"LD L,H", 0, fn_ld_l_h},
+	{"LD L,L", 0, fn_ld_l_l},
 	{"LD L,(HL)", 0, NULL},
-	{"LD L,A", 0, NULL},
+	{"LD L,A", 0, fn_ld_l_a},
 	{"LD (HL),B", 0, NULL},
 	{"LD (HL),C", 0, NULL},
 	{"LD (HL),D", 0, NULL},
@@ -188,15 +274,15 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD (HL),H", 0, NULL},
 	{"LD (HL),L", 0, NULL},
 	{"HALT", 0, NULL},
-	{"LD (HL),A", 0, NULL},
-	{"LD A,B", 0, NULL},
-	{"LD A,C", 0, NULL},
-	{"LD A,D", 0, NULL},
-	{"LD A,E", 0, NULL},
-	{"LD A,H", 0, NULL},
-	{"LD A,L", 0, NULL},
+	{"LD (HL),A", 0, fn_ld_hl_a},
+	{"LD A,B", 0, fn_ld_a_b},
+	{"LD A,C", 0, fn_ld_a_c},
+	{"LD A,D", 0, fn_ld_a_d},
+	{"LD A,E", 0, fn_ld_a_e},
+	{"LD A,H", 0, fn_ld_a_h},
+	{"LD A,L", 0, fn_ld_a_l},
 	{"LD A,(HL)", 0, NULL},
-	{"LD A,A", 0, NULL},
+	{"LD A,A", 0, fn_ld_a_a},
 	{"ADD A,B", 0, NULL},
 	{"ADD A,C", 0, NULL},
 	{"ADD A,D", 0, NULL},
@@ -338,5 +424,7 @@ void printRegisters(struct cpu_registers* registers);
 
 void pushStack(struct cpu_cpu *cpu, unsigned char value);
 unsigned char popStack(struct cpu_cpu *cpu);
+
+int getCarry(unsigned short a, unsigned short b, int bit);
 
 #endif
