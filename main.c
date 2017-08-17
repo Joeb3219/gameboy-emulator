@@ -82,18 +82,7 @@ int main(int argc, char** argv){
 
 	struct cpu_cpu *cpu = createCPU();
 
-	printf("Hello world!\n");
-
-	cpu->registers->hl = 0xf84A;
-
-	printRegisters(cpu->registers);
-	printf("Register HL: %d\n", cpu->registers->hl);
-
-	printf("%d\n", instructions[0].numArgs);
-
 	loadROM(cpu->memory, argv[1]);
-
-	printf("Memory @ 0x000: %0x\n", cpu->memory[0x0000]);
 
 	// POWER UP SEQUENCE
 
@@ -110,8 +99,9 @@ int main(int argc, char** argv){
 
 	resetStackAndRegisters(cpu, cpu->memory);
 
-	pushStack(cpu, 0x3E);
-	printf("Popped stack: %0X\n", popStack(cpu));
+	printRegisters(cpu->registers);
+
+	cpu_run(cpu);
 
 	destroyCPU(cpu);
 

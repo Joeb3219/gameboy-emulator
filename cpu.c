@@ -29,7 +29,7 @@ int cpu_execute(){
         return 0;
 }
 
-void cpu_run(struct cpu_cpu cpu){
+void cpu_run(struct cpu_cpu *cpu){
 
         while(1 == 1){
                 cpu_fetch();
@@ -55,7 +55,9 @@ void printRegisters(struct cpu_registers* registers){
 	printf("BC: %0x\n", registers->bc);
 	printf(" B: %0x\n", registers->b);
 	printf(" C: %0x\n", registers->c);
-
+	printf("SP: %0x\n", registers->sp);
+	printf("PC: %0x\n", registers->pc);
+	printf("FLAG: Z: %x, S: %x, HC: %x, C: %x\n", registers->flag_zero, registers->flag_sub, registers->flag_halfcarry, registers->flag_carry);
 	printf("== End Registers ==\n");
 }
 

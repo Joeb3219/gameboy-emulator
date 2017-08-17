@@ -60,7 +60,7 @@ void destroyCPU(struct cpu_cpu* cpu);
 int cpu_execute();
 int cpu_decode();
 int cpu_fetch();
-void cpu_run(struct cpu_cpu cpu);
+void cpu_run(struct cpu_cpu *cpu);
 
 void printRegisters(struct cpu_registers* registers);
 
