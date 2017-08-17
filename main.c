@@ -5,6 +5,11 @@
 
 int main(int argc, char** argv){
 
+	if(argc != 2){
+		printf("Usage: %s <filename>\n", argv[0]);
+		return 1;
+	}
+
 	struct cpu_cpu *cpu = createCPU();
 
 	printf("Hello world!\n");
@@ -13,6 +18,10 @@ int main(int argc, char** argv){
 
 	printRegisters(cpu->registers);
 	printf("Register HL: %d\n", cpu->registers->hl);
+
+	printf("%d\n", instructions[0].numArgs);
+
+	
 
 	destroyCPU(cpu);
 

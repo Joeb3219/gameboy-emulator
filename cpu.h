@@ -2,6 +2,16 @@
 
 #define CPU_H_
 
+struct cpu_instruction{
+	char *opcode;
+	int numArgs;
+	void (*function);
+};
+
+static const struct cpu_instruction instructions[0xFF] = {
+	{"nop", 0, NULL}
+};
+
 struct cpu_registers{
 	union{
 		struct{
