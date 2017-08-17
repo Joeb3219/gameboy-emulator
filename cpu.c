@@ -24,17 +24,18 @@ int cpu_decode(){
         return 0;
 }
 
-int cpu_execute(){
+Status cpu_execute(){
 
-        return 0;
+        return HLT;
 }
 
 void cpu_run(struct cpu_cpu *cpu){
+	Status status = OK;
 
-        while(1 == 1){
+        while(status == OK){
                 cpu_fetch();
                 cpu_decode();
-                cpu_execute();
+                status = cpu_execute();
                 break;
         }
 
@@ -42,7 +43,6 @@ void cpu_run(struct cpu_cpu *cpu){
 
 void printRegisters(struct cpu_registers* registers){
 	printf("==== Registers ====\n");
-
 	printf("HL: %0x\n", registers->hl);
 	printf(" H: %0x\n", registers->h);
 	printf(" L: %0x\n", registers->l);

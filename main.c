@@ -101,6 +101,8 @@ int main(int argc, char** argv){
 
 	printRegisters(cpu->registers);
 
+	printf("Loading successful: Now executing the game.\n");
+
 	cpu_run(cpu);
 
 	destroyCPU(cpu);
