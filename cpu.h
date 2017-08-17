@@ -2,6 +2,48 @@
 
 #define CPU_H_
 
+struct cpu_registers{
+	union{
+		struct{
+			unsigned char l;
+			unsigned char h;
+		};
+		unsigned short hl;
+	};
+	union{
+		struct{
+			unsigned char c;
+			unsigned char b;
+		};
+		unsigned short bc;
+	};
+	union{
+		struct{
+			unsigned char e;
+			unsigned char d;
+		};
+		unsigned short de;
+	};
+	union{
+		struct{
+			unsigned char f;
+			unsigned char a;
+		};
+		unsigned short af;
+	};
+	unsigned short pc;
+	unsigned short sp;
+	unsigned short flag_zero; // Z
+	unsigned short flag_sub;  // N
+	unsigned short flag_halfcarry; // H
+	unsigned short flag_carry; // C
+};
+
+struct cpu_cpu{
+	struct cpu_registers* registers;
+	unsigned char *memory;
+};
+
 typedef enum status{
 	OK, HLT, ERR
 } Status;
@@ -9,11 +51,25 @@ typedef enum status{
 struct cpu_instruction{
 	char *opcode;
 	int numArgs;
-	Status (*function)(unsigned char, unsigned char);
+	Status (*function)(struct cpu_cpu *cpu, unsigned char, unsigned char);
 };
 
+Status fn_nop(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_jp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cpl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_bc(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_de(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_dec_sp(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+
 static const struct cpu_instruction instructions[256] = {
-	{"NOP", 0, NULL},
+	{"NOP", 0, fn_nop},
 	{"LD BC,nn", 2, NULL},
 	{"LD (BC),A", 0, NULL},
 	{"INC BC", 0, NULL},
@@ -21,10 +77,10 @@ static const struct cpu_instruction instructions[256] = {
 	{"DEC B", 0, NULL},
 	{"LD B,n", 1, NULL},
 	{"RLC A", 0, NULL},
-	{"LD (nn),SP", 22, NULL},
+	{"LD (nn),SP", 2, NULL},
 	{"ADD HL,BC", 0, NULL},
 	{"LD A,(BC)", 0, NULL},
-	{"DEC BC", 0, NULL},
+	{"DEC BC", 0, fn_dec_bc},
 	{"INC C", 0, NULL},
 	{"DEC C", 0, NULL},
 	{"LD C,n", 1, NULL},
@@ -40,7 +96,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"JR n", 1, NULL},
 	{"ADD HL,DE", 0, NULL},
 	{"LD A,(DE)", 0, NULL},
-	{"DEC DE", 0, NULL},
+	{"DEC DE", 0, fn_dec_bc},
 	{"INC E", 0, NULL},
 	{"DEC E", 0, NULL},
 	{"LD E,n", 1, NULL},
@@ -56,11 +112,11 @@ static const struct cpu_instruction instructions[256] = {
 	{"JR Z,n", 1, NULL},
 	{"ADD HL,HL", 0, NULL},
 	{"LDI A,(HL)", 0, NULL},
-	{"DEC HL", 0, NULL},
+	{"DEC HL", 0, fn_dec_hl},
 	{"INC L", 0, NULL},
 	{"DEC L", 0, NULL},
 	{"LD L,n", 1, NULL},
-	{"CPL", 0, NULL},
+	{"CPL", 0, fn_cpl},
 	{"JR NC,n", 1, NULL},
 	{"LD SP,nn", 2, NULL},
 	{"LDD (HL),A", 0, NULL},
@@ -72,7 +128,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"JR C,n", 1, NULL},
 	{"ADD HL,SP", 0, NULL},
 	{"LDD A,(HL)", 0, NULL},
-	{"DEC SP", 0, NULL},
+	{"DEC SP", 0, fn_dec_sp},
 	{"INC A", 0, NULL},
 	{"DEC A", 0, NULL},
 	{"LD A,n", 0, NULL},
@@ -85,12 +141,12 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD B,L", 0, NULL},
 	{"LD B,(HL)", 0, NULL},
 	{"LD B,A", 0, NULL},
-	{"LD C,B", 0, NULL},
-	{"LD C,C", 0, NULL},
-	{"LD C,D", 0, NULL},
-	{"LD C,E", 0, NULL},
-	{"LD C,H", 0, NULL},
-	{"LD C,L", 0, NULL},
+	{"LD C,B", 0, fn_ld_c_b},
+	{"LD C,C", 0, fn_ld_c_c},
+	{"LD C,D", 0, fn_ld_c_d},
+	{"LD C,E", 0, fn_ld_c_e},
+	{"LD C,H", 0, fn_ld_c_h},
+	{"LD C,L", 0, fn_ld_c_l},
 	{"LD C,(HL)", 0, NULL},
 	{"LD C,A", 0, NULL},
 	{"LD D,B", 0, NULL},
@@ -208,7 +264,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"RET NZ", 0, NULL},
 	{"POP BC", 0, NULL},
 	{"JP NZ,nn", 2, NULL},
-	{"JP nn", 2, NULL},
+	{"JP nn", 2, fn_jp_nn},
 	{"CALL NZ,nn", 2, NULL},
 	{"PUSH BC", 0, NULL},
 	{"ADD A,n", 1, NULL},
@@ -269,48 +325,6 @@ static const struct cpu_instruction instructions[256] = {
 	{"XX", 0, NULL},
 	{"CP n", 1, NULL},
 	{"RST 38", 0, NULL}
-};
-
-struct cpu_registers{
-	union{
-		struct{
-			unsigned char l;
-			unsigned char h;
-		};
-		unsigned short hl;
-	};
-	union{
-		struct{
-			unsigned char c;
-			unsigned char b;
-		};
-		unsigned short bc;
-	};
-	union{
-		struct{
-			unsigned char e;
-			unsigned char d;
-		};
-		unsigned short de;
-	};
-	union{
-		struct{
-			unsigned char f;
-			unsigned char a;
-		};
-		unsigned short af;
-	};
-	unsigned short pc;
-	unsigned short sp;
-	unsigned short flag_zero;
-	unsigned short flag_sub;
-	unsigned short flag_halfcarry;
-	unsigned short flag_carry;
-};
-
-struct cpu_cpu{
-	struct cpu_registers* registers;
-	unsigned char *memory;
 };
 
 struct cpu_cpu* createCPU();

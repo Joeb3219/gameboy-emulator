@@ -6,4 +6,4 @@ emul: main.c
 	$(CC) -Wall -g -o emul main.c cpu.c
 
 clean:
-	rm -rf emul emul.o
+	rm -rf emul emul.o cpu.o
