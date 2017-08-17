@@ -220,6 +220,12 @@ Status fn_ld_l_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
 }
 
+// Increment L
+Status fn_inc_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->l = arg1;
+	return OK;
+}
+
 Status fn_ld_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	cpu->registers->a = cpu->registers->a;
 	return OK;
