@@ -9,7 +9,7 @@ typedef enum status{
 struct cpu_instruction{
 	char *opcode;
 	int numArgs;
-	void (*function);
+	Status (*function)(unsigned char, unsigned char);
 };
 
 static const struct cpu_instruction instructions[256] = {
@@ -317,8 +317,7 @@ struct cpu_cpu* createCPU();
 void destroyCPU(struct cpu_cpu* cpu);
 
 Status cpu_execute();
-int cpu_decode();
-int cpu_fetch();
+void cpu_decode(struct cpu_cpu *cpu, struct cpu_instruction *instruction, unsigned char *arg1, unsigned char *arg2);
 void cpu_run(struct cpu_cpu *cpu);
 
 void printRegisters(struct cpu_registers* registers);

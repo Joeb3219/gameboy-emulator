@@ -14,28 +14,28 @@ void destroyCPU(struct cpu_cpu* cpu){
 	free(cpu);
 }
 
-int cpu_fetch(){
-
-        return 0;
-}
-
-int cpu_decode(){
-
-        return 0;
-}
-
-Status cpu_execute(){
-
-        return HLT;
+void cpu_decode(struct cpu_cpu *cpu, struct cpu_instruction *instruction, unsigned char *arg1, unsigned char *arg2){
+	unsigned char instrOpcode = cpu->memory[cpu->registers->pc];
+	*instruction = instructions[instrOpcode];
+	if(instruction->numArgs > 0) (*arg1) = cpu->memory[cpu->registers->pc + 1];
+	if(instruction->numArgs > 1) (*arg2) = cpu->memory[cpu->registers->pc + 2];
+	if(instruction->numArgs > 2) printf("Err: Expected a maximum of 2 args, however %s carries %d args.\n", instruction->opcode, instruction->numArgs);
+        return;
 }
 
 void cpu_run(struct cpu_cpu *cpu){
 	Status status = OK;
+	unsigned char arg1, arg2;
+	struct cpu_instruction instruction;
 
         while(status == OK){
-                cpu_fetch();
-                cpu_decode();
-                status = cpu_execute();
+                cpu_decode(cpu, &instruction, &arg1, &arg2);
+		if(instruction.function == NULL){
+			printf("[ERR]: Unimplemented instruction %s\n", instruction.opcode);
+			status = ERR;
+		}else{
+			instruction.function(arg1, arg2);
+		}
                 break;
         }
 
