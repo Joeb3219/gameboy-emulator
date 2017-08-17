@@ -220,9 +220,103 @@ Status fn_ld_l_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
 }
 
+// Increment A
+Status fn_inc_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (cpu->registers->a += 1);
+	cpu->registers->flag_zero = (val == 0);
+	cpu->registers->flag_halfcarry = getCarry(val - 1, 1, 3);
+	cpu->registers->flag_zero = 0;
+	return OK;
+}
+
+// Increment B
+Status fn_inc_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (cpu->registers->b += 1);
+	cpu->registers->flag_zero = (val == 0);
+	cpu->registers->flag_halfcarry = getCarry(val - 1, 1, 3);
+	cpu->registers->flag_zero = 0;
+	return OK;
+}
+
+// Increment C
+Status fn_inc_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (cpu->registers->c += 1);
+	cpu->registers->flag_zero = (val == 0);
+	cpu->registers->flag_halfcarry = getCarry(val - 1, 1, 3);
+	cpu->registers->flag_zero = 0;
+	return OK;
+}
+
+// Increment D
+Status fn_inc_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (cpu->registers->d += 1);
+	cpu->registers->flag_zero = (val == 0);
+	cpu->registers->flag_halfcarry = getCarry(val - 1, 1, 3);
+	cpu->registers->flag_zero = 0;
+	return OK;
+}
+
+// Increment E
+Status fn_inc_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (cpu->registers->e += 1);
+	cpu->registers->flag_zero = (val == 0);
+	cpu->registers->flag_halfcarry = getCarry(val - 1, 1, 3);
+	cpu->registers->flag_zero = 0;
+	return OK;
+}
+
+// Increment H
+Status fn_inc_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (cpu->registers->h += 1);
+	cpu->registers->flag_zero = (val == 0);
+	cpu->registers->flag_halfcarry = getCarry(val - 1, 1, 3);
+	cpu->registers->flag_zero = 0;
+	return OK;
+}
+
 // Increment L
 Status fn_inc_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
-	cpu->registers->l = arg1;
+	unsigned short val = (cpu->registers->l += 1);
+	cpu->registers->flag_zero = (val == 0);
+	cpu->registers->flag_halfcarry = getCarry(val - 1, 1, 3);
+	cpu->registers->flag_zero = 0;
+	return OK;
+}
+
+// Rotate A right through carry
+Status fn_rra(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	int newCarryFlag = (cpu->registers->a & 0x1) != 0;
+	cpu->registers->a = (cpu->registers->a >> 1) | (cpu->registers->flag_carry << 7);
+	cpu->registers->flag_carry = newCarryFlag;
+	cpu->registers->flag_zero = cpu->registers->flag_halfcarry = cpu->registers->flag_sub = 0;
+	return OK;
+}
+
+// Loads nn -> BC
+Status fn_ld_bc_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (arg1 << 8) | arg2;
+	cpu->registers->bc = val;
+	return OK;
+}
+
+// Loads nn -> DE
+Status fn_ld_de_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (arg1 << 8) | arg2;
+	cpu->registers->de = val;
+	return OK;
+}
+
+// Loads nn -> HL
+Status fn_ld_hl_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (arg1 << 8) | arg2;
+	cpu->registers->hl = val;
+	return OK;
+}
+
+// Loads nn -> SP
+Status fn_ld_sp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short val = (arg1 << 8) | arg2;
+	cpu->registers->sp = val;
 	return OK;
 }
 

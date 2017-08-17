@@ -153,13 +153,25 @@ Status fn_ld_l_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_l_f(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_l_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_l_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rra(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_bc_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_de_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_sp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
-	{"LD BC,nn", 2, NULL},
+	{"LD BC,nn", 2, fn_ld_bc_nn},
 	{"LD (BC),A", 0, NULL},
 	{"INC BC", 0, NULL},
-	{"INC B", 0, NULL},
+	{"INC B", 0, fn_inc_b},
 	{"DEC B", 0, fn_dec_b},
 	{"LD B,n", 1, fn_ld_b_n},
 	{"RLC A", 0, NULL},
@@ -167,15 +179,15 @@ static const struct cpu_instruction instructions[256] = {
 	{"ADD HL,BC", 0, fn_add_hl_bc},
 	{"LD A,(BC)", 0, NULL},
 	{"DEC BC", 0, fn_dec_bc},
-	{"INC C", 0, NULL},
+	{"INC C", 0, fn_inc_c},
 	{"DEC C", 0, fn_dec_c},
 	{"LD C,n", 1, fn_ld_c_n},
 	{"RRC A", 0, NULL},
 	{"STOP", 0, NULL},
-	{"LD DE,nn", 2, NULL},
+	{"LD DE,nn", 2, fn_ld_de_nn},
 	{"LD (DE),A", 0, NULL},
 	{"INC DE", 0, NULL},
-	{"INC D", 0, NULL},
+	{"INC D", 0, fn_inc_d},
 	{"DEC D", 0, fn_dec_d},
 	{"LD D,n", 1, fn_ld_d_n},
 	{"RL A", 0, NULL},
@@ -183,15 +195,15 @@ static const struct cpu_instruction instructions[256] = {
 	{"ADD HL,DE", 0, fn_add_hl_de},
 	{"LD A,(DE)", 0, NULL},
 	{"DEC DE", 0, fn_dec_bc},
-	{"INC E", 0, NULL},
+	{"INC E", 0, fn_inc_e},
 	{"DEC E", 0, fn_dec_e},
 	{"LD E,n", 1, fn_ld_e_n},
-	{"RR A", 0, NULL},
+	{"RRA", 0, fn_rra},
 	{"JR NZ,n", 1, NULL},
-	{"LD HL,nn", 2, NULL},
+	{"LD HL,nn", 2, fn_ld_hl_nn},
 	{"LDI (HL),A", 0, fn_ldi_hl_a},
 	{"INC HL", 0, NULL},
-	{"INC H", 0, NULL},
+	{"INC H", 0, fn_inc_h},
 	{"DEC H", 0, fn_dec_h},
 	{"LD H,n", 1, fn_ld_h_n},
 	{"DAA", 0, NULL},
@@ -199,12 +211,12 @@ static const struct cpu_instruction instructions[256] = {
 	{"ADD HL,HL", 0, fn_add_hl_hl},
 	{"LDI A,(HL)", 0, NULL},
 	{"DEC HL", 0, fn_dec_hl},
-	{"INC L", 0, NULL},
+	{"INC L", 0, fn_inc_l},
 	{"DEC L", 0, fn_dec_l},
 	{"LD L,n", 1, fn_ld_l_n},
 	{"CPL", 0, fn_cpl},
 	{"JR NC,n", 1, NULL},
-	{"LD SP,nn", 2, NULL},
+	{"LD SP,nn", 2, fn_ld_sp_nn},
 	{"LDD (HL),A", 0, NULL},
 	{"INC SP", 0, NULL},
 	{"INC (HL)", 0, NULL},
@@ -215,7 +227,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"ADD HL,SP", 0, fn_add_hl_sp},
 	{"LDD A,(HL)", 0, NULL},
 	{"DEC SP", 0, fn_dec_sp},
-	{"INC A", 0, NULL},
+	{"INC A", 0, fn_inc_a},
 	{"DEC A", 0, fn_dec_a},
 	{"LD A,n", 0, fn_ld_a_n},
 	{"CCF", 0, NULL},
