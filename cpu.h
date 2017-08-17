@@ -165,11 +165,13 @@ Status fn_ld_bc_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_de_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_hl_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_sp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_bc_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_de_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
 	{"LD BC,nn", 2, fn_ld_bc_nn},
-	{"LD (BC),A", 0, NULL},
+	{"LD (BC),A", 0, fn_ld_bc_a},
 	{"INC BC", 0, NULL},
 	{"INC B", 0, fn_inc_b},
 	{"DEC B", 0, fn_dec_b},
@@ -185,7 +187,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"RRC A", 0, NULL},
 	{"STOP", 0, NULL},
 	{"LD DE,nn", 2, fn_ld_de_nn},
-	{"LD (DE),A", 0, NULL},
+	{"LD (DE),A", 0, fn_ld_de_a},
 	{"INC DE", 0, NULL},
 	{"INC D", 0, fn_inc_d},
 	{"DEC D", 0, fn_dec_d},

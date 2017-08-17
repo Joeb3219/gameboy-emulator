@@ -320,6 +320,18 @@ Status fn_ld_sp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
 }
 
+// Loads A -> (DE)
+Status fn_ld_de_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->de] = cpu->registers->a;
+	return OK;
+}
+
+// Loads A -> (BC)
+Status fn_ld_bc_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->bc] = cpu->registers->a;
+	return OK;
+}
+
 Status fn_ld_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	cpu->registers->a = cpu->registers->a;
 	return OK;
