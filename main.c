@@ -68,6 +68,8 @@ void resetStackAndRegisters(struct cpu_cpu *cpu, unsigned char *memory){
 	memory[0xFF4A] = 0x00;
 	memory[0xFF4B] = 0x00;
 	memory[0xFFFF] = 0x00;
+
+	cpu->registers->pc = 0x100;
 }
 
 int main(int argc, char** argv){
@@ -89,16 +91,15 @@ int main(int argc, char** argv){
 
 	printf("%d\n", instructions[0].numArgs);
 
-	unsigned char *memory = calloc(sizeof(unsigned char), 0xFFFF); // Request 0xFFFF bytes of memory
-	loadROM(memory, argv[1]);
+	loadROM(cpu->memory, argv[1]);
 
-	printf("Memory @ 0x000: %0x\n", memory[0x0000]);
+	printf("Memory @ 0x000: %0x\n", cpu->memory[0x0000]);
 
 	// POWER UP SEQUENCE
 
 	// Verify that rom has valid signature.
 	tmp = 0;
-	for(i = 0x134; i < 0x14d; i ++) tmp += memory[i];
+	for(i = 0x134; i < 0x14d; i ++) tmp += cpu->memory[i];
 	if( ( (tmp + 25) & 0x80) != 0x80){
 		printf("Invalid signature.\n");
 		return 1;
@@ -107,7 +108,10 @@ int main(int argc, char** argv){
 	// Verification complete, we can now load in values to registers for program execution.
 
 
-	resetStackAndRegisters(cpu, memory);
+	resetStackAndRegisters(cpu, cpu->memory);
+
+	pushStack(cpu, 0x3E);
+	printf("Popped stack: %0X\n", popStack(cpu));
 
 	destroyCPU(cpu);
 

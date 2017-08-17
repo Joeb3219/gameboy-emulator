@@ -43,11 +43,15 @@ struct cpu_registers{
 	};
 	unsigned short pc;
 	unsigned short sp;
-	unsigned short flags;
+	unsigned short flag_zero;
+	unsigned short flag_sub;
+	unsigned short flag_halfcarry;
+	unsigned short flag_carry;
 };
 
 struct cpu_cpu{
 	struct cpu_registers* registers;
+	unsigned char *memory;
 };
 
 struct cpu_cpu* createCPU();
@@ -59,5 +63,8 @@ int cpu_fetch();
 void cpu_run(struct cpu_cpu cpu);
 
 void printRegisters(struct cpu_registers* registers);
+
+void pushStack(struct cpu_cpu *cpu, unsigned char value);
+unsigned char popStack(struct cpu_cpu *cpu);
 
 #endif

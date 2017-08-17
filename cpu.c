@@ -5,6 +5,7 @@
 struct cpu_cpu* createCPU(){
 	struct cpu_cpu *cpu = malloc(sizeof(struct cpu_cpu));
 	cpu->registers = malloc(sizeof(struct cpu_registers));
+	cpu->memory = calloc(sizeof(unsigned char), 0xFFFF);
 	return cpu;
 }
 
@@ -56,4 +57,15 @@ void printRegisters(struct cpu_registers* registers){
 	printf(" C: %0x\n", registers->c);
 
 	printf("== End Registers ==\n");
+}
+
+void pushStack(struct cpu_cpu *cpu, unsigned char value){
+	cpu->registers->sp --;
+	cpu->memory[cpu->registers->sp] = value;
+}
+
+unsigned char popStack(struct cpu_cpu *cpu){
+	unsigned char value = cpu->memory[cpu->registers->sp];
+	cpu->registers->sp ++;
+	return value;
 }
