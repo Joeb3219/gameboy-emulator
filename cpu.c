@@ -131,12 +131,6 @@ Status fn_ldi_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 }
 
 // A -> (HL), then icrement HL
-Status fn_ld_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
-	fn_ldi_hl_a(cpu, arg1, arg2);
-	return OK;
-}
-
-// A -> (HL), then icrement HL
 Status fn_ld_hli_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	fn_ldi_hl_a(cpu, arg1, arg2);
 	return OK;
@@ -330,6 +324,95 @@ Status fn_ld_de_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 Status fn_ld_bc_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	cpu->memory[cpu->registers->bc] = cpu->registers->a;
 	return OK;
+}
+
+// Loads (HL) -> A
+Status fn_ld_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->a = cpu->memory[cpu->registers->hl];
+	return OK;
+}
+
+// Loads (HL) -> B
+Status fn_ld_b_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->b = cpu->memory[cpu->registers->hl];
+	return OK;
+}
+
+// Loads (HL) -> C
+Status fn_ld_c_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->c = cpu->memory[cpu->registers->hl];
+	return OK;
+}
+
+// Loads (HL) -> D
+Status fn_ld_d_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->d = cpu->memory[cpu->registers->hl];
+	return OK;
+}
+
+// Loads (HL) -> E
+Status fn_ld_e_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->e = cpu->memory[cpu->registers->hl];
+	return OK;
+}
+
+// Loads (HL) -> H
+Status fn_ld_h_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->h = cpu->memory[cpu->registers->hl];
+	return OK;
+}
+
+// Loads (HL) -> L
+Status fn_ld_l_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->l = cpu->memory[cpu->registers->hl];
+	return OK;
+}
+
+// Loads A -> (HL)
+Status fn_ld_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->a;
+	return OK;
+}
+
+// Loads B -> (HL)
+Status fn_ld_hl_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->b;
+	return OK;
+}
+
+// Loads C -> (HL)
+Status fn_ld_hl_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->c;
+	return OK;
+}
+
+// Loads D -> (HL)
+Status fn_ld_hl_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->d;
+	return OK;
+}
+
+// Loads E -> (HL)
+Status fn_ld_hl_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->e;
+	return OK;
+}
+
+// Loads H -> (HL)
+Status fn_ld_hl_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->h;
+	return OK;
+}
+
+// Loads L -> (HL)
+Status fn_ld_hl_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->l;
+	return OK;
+}
+
+// STOP! Wait for an input of some sort.
+Status fn_stop(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	return STOP;
 }
 
 Status fn_ld_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
@@ -678,7 +761,12 @@ void cpu_run(struct cpu_cpu *cpu){
 	unsigned char arg1, arg2;
 	struct cpu_instruction instruction;
 
-        while(status == OK){
+        while(status == OK || status == STOP){
+		if(status == STOP){
+			printf("Waiting for input\n");
+			status = OK; // TODO: actually implement a button must be pressed.
+			continue;
+		}
                 cpu_decode(cpu, &instruction, &arg1, &arg2);
 		printf("Executing instruction: %s [%0x: %0x] (%0X, %0X)\n", instruction.opcode, cpu->registers->pc, cpu->memory[cpu->registers->pc], cpu->memory[cpu->registers->pc + 1], cpu->memory[cpu->registers->pc + 2]);
 

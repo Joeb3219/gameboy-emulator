@@ -45,7 +45,7 @@ struct cpu_cpu{
 };
 
 typedef enum status{
-	OK, HLT, ERR
+	OK, HLT, ERR, STOP
 } Status;
 
 struct cpu_instruction{
@@ -167,6 +167,21 @@ Status fn_ld_hl_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_sp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_bc_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_de_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_stop(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_b_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_c_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_d_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_e_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_h_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_l_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
@@ -185,7 +200,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"DEC C", 0, fn_dec_c},
 	{"LD C,n", 1, fn_ld_c_n},
 	{"RRC A", 0, NULL},
-	{"STOP", 0, NULL},
+	{"STOP", 0, fn_stop},
 	{"LD DE,nn", 2, fn_ld_de_nn},
 	{"LD (DE),A", 0, fn_ld_de_a},
 	{"INC DE", 0, NULL},
@@ -239,7 +254,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD B,E", 0, fn_ld_b_e},
 	{"LD B,H", 0, fn_ld_b_h},
 	{"LD B,L", 0, fn_ld_b_l},
-	{"LD B,(HL)", 0, NULL},
+	{"LD B,(HL)", 0, fn_ld_b_hl},
 	{"LD B,A", 0, NULL},
 	{"LD C,B", 0, fn_ld_c_b},
 	{"LD C,C", 0, fn_ld_c_c},
@@ -247,7 +262,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD C,E", 0, fn_ld_c_e},
 	{"LD C,H", 0, fn_ld_c_h},
 	{"LD C,L", 0, fn_ld_c_l},
-	{"LD C,(HL)", 0, NULL},
+	{"LD C,(HL)", 0, fn_ld_c_hl},
 	{"LD C,A", 0, NULL},
 	{"LD D,B", 0, fn_ld_d_b},
 	{"LD D,C", 0, fn_ld_d_c},
@@ -255,7 +270,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD D,E", 0, fn_ld_d_e},
 	{"LD D,H", 0, fn_ld_d_h},
 	{"LD D,L", 0, fn_ld_d_l},
-	{"LD D,(HL)", 0, NULL},
+	{"LD D,(HL)", 0, fn_ld_d_hl},
 	{"LD D,A", 0, fn_ld_d_a},
 	{"LD E,B", 0, fn_ld_e_b},
 	{"LD E,C", 0, fn_ld_e_c},
@@ -263,7 +278,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD E,E", 0, fn_ld_e_e},
 	{"LD E,H", 0, fn_ld_e_h},
 	{"LD E,L", 0, fn_ld_e_l},
-	{"LD E,(HL)", 0, NULL},
+	{"LD E,(HL)", 0, fn_ld_e_hl},
 	{"LD E,A", 0, fn_ld_e_a},
 	{"LD H,B", 0, fn_ld_h_b},
 	{"LD H,C", 0, fn_ld_h_c},
@@ -271,7 +286,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD H,E", 0, fn_ld_h_e},
 	{"LD H,H", 0, fn_ld_h_h},
 	{"LD H,L", 0, fn_ld_h_l},
-	{"LD H,(HL)", 0, NULL},
+	{"LD H,(HL)", 0, fn_ld_h_hl},
 	{"LD H,A", 0, fn_ld_h_a},
 	{"LD L,B", 0, fn_ld_l_b},
 	{"LD L,C", 0, fn_ld_l_c},
@@ -279,14 +294,14 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD L,E", 0, fn_ld_l_e},
 	{"LD L,H", 0, fn_ld_l_h},
 	{"LD L,L", 0, fn_ld_l_l},
-	{"LD L,(HL)", 0, NULL},
+	{"LD L,(HL)", 0, fn_ld_l_hl},
 	{"LD L,A", 0, fn_ld_l_a},
-	{"LD (HL),B", 0, NULL},
-	{"LD (HL),C", 0, NULL},
-	{"LD (HL),D", 0, NULL},
-	{"LD (HL),E", 0, NULL},
-	{"LD (HL),H", 0, NULL},
-	{"LD (HL),L", 0, NULL},
+	{"LD (HL),B", 0, fn_ld_hl_b},
+	{"LD (HL),C", 0, fn_ld_hl_c},
+	{"LD (HL),D", 0, fn_ld_hl_d},
+	{"LD (HL),E", 0, fn_ld_hl_e},
+	{"LD (HL),H", 0, fn_ld_hl_h},
+	{"LD (HL),L", 0, fn_ld_hl_l},
 	{"HALT", 0, NULL},
 	{"LD (HL),A", 0, fn_ld_hl_a},
 	{"LD A,B", 0, fn_ld_a_b},
@@ -295,7 +310,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD A,E", 0, fn_ld_a_e},
 	{"LD A,H", 0, fn_ld_a_h},
 	{"LD A,L", 0, fn_ld_a_l},
-	{"LD A,(HL)", 0, NULL},
+	{"LD A,(HL)", 0, fn_ld_a_hl},
 	{"LD A,A", 0, fn_ld_a_a},
 	{"ADD A,B", 0, NULL},
 	{"ADD A,C", 0, NULL},
