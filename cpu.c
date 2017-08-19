@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include "cpu.h"
 
+unsigned short mergeBytesToShort(unsigned char a, unsigned char b){
+	return (((unsigned short) b) << 8) | a;
+}
+
 // No operation
 Status fn_nop(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
@@ -9,8 +13,8 @@ Status fn_nop(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 
 // Absolute jump
 Status fn_jp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
-	unsigned short address = (arg1 << 8) | arg2;
-	address --; // Avoid increment that occurs after instruction execute
+	unsigned short address = mergeBytesToShort(arg1, arg2);
+	address -= 3; // Avoid increment that occurs after instruction execute
 	cpu->registers->pc = address;
 	return OK;
 }
@@ -288,28 +292,28 @@ Status fn_rra(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 
 // Loads nn -> BC
 Status fn_ld_bc_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
-	unsigned short val = (arg1 << 8) | arg2;
+	unsigned short val = mergeBytesToShort(arg2, arg1);
 	cpu->registers->bc = val;
 	return OK;
 }
 
 // Loads nn -> DE
 Status fn_ld_de_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
-	unsigned short val = (arg1 << 8) | arg2;
+	unsigned short val = mergeBytesToShort(arg1, arg2);
 	cpu->registers->de = val;
 	return OK;
 }
 
 // Loads nn -> HL
 Status fn_ld_hl_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
-	unsigned short val = (arg1 << 8) | arg2;
+	unsigned short val = mergeBytesToShort(arg1, arg2);
 	cpu->registers->hl = val;
 	return OK;
 }
 
 // Loads nn -> SP
 Status fn_ld_sp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
-	unsigned short val = (arg1 << 8) | arg2;
+	unsigned short val = mergeBytesToShort(arg1, arg2);
 	cpu->registers->sp = val;
 	return OK;
 }
@@ -413,6 +417,261 @@ Status fn_ld_hl_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 // STOP! Wait for an input of some sort.
 Status fn_stop(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return STOP;
+}
+
+// Generic subtract method for bytes
+void subtract(struct cpu_cpu *cpu, unsigned char *destination, unsigned char b){
+	unsigned char a = *destination;
+	cpu->registers->flag_zero = (a - b) == 0;
+	cpu->registers->flag_sub = 1;
+	cpu->registers->flag_halfcarry = getCarry(a, -1 * b, 4);
+	cpu->registers->flag_carry = (b > a);
+	(*destination) = a - b;
+}
+
+// Subtract A - A -> A
+Status fn_sub_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->a);
+	return OK;
+}
+
+// Subtract A - B -> A
+Status fn_sub_a_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->b);
+	return OK;
+}
+
+// Subtract A - C -> A
+Status fn_sub_a_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->c);
+	return OK;
+}
+
+// Subtract A - D -> A
+Status fn_sub_a_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->d);
+	return OK;
+}
+
+// Subtract A - E -> A
+Status fn_sub_a_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->e);
+	return OK;
+}
+
+// Subtract A - H -> A
+Status fn_sub_a_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->h);
+	return OK;
+}
+
+// Subtract A - L -> A
+Status fn_sub_a_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->l);
+	return OK;
+}
+
+// Subtract A - (HL) -> A
+Status fn_sub_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->memory[cpu->registers->hl]);
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - A -> A
+Status fn_sbc_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->a + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - B -> A
+Status fn_sbc_a_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->b + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - C -> A
+Status fn_sbc_a_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->c + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - D -> A
+Status fn_sbc_a_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->d + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - H -> A
+Status fn_sbc_a_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->h + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - E -> A
+Status fn_sbc_a_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->e + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - L -> A
+Status fn_sbc_a_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->registers->l + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Subtract (+ 1 if carry from previous), A - (HL) -> A
+Status fn_sbc_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	subtract(cpu, &cpu->registers->a, cpu->memory[cpu->registers->hl] + (cpu->registers->flag_carry ? 1 : 0));
+	return OK;
+}
+
+// Add n to current address pointer and jump to it (jump relative)
+Status fn_jr_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->pc += (signed char) arg1 - 2; // Subtract two so that we will be at the correct address
+	return OK;
+}
+
+// Increments BC by one
+Status fn_inc_bc(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->bc += 1;
+	return OK;
+}
+
+// Increments DE by one
+Status fn_inc_de(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->de += 1;
+	return OK;
+}
+
+// Increments HL by one
+Status fn_inc_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->hl += 1;
+	return OK;
+}
+
+// Increments SP by one
+Status fn_inc_sp(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->sp += 1;
+	return OK;
+}
+
+// Calls a function by pushing the next addy to the stack and jumping to nn
+Status fn_call_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned short address = mergeBytesToShort(arg1, arg2);
+	pushStack(cpu, cpu->registers->pc + 1);
+	cpu->registers->pc = address - 3; // Subtract 3 so we don't move an extra instruction ahead.
+	return OK;
+}
+
+// A generic XOR method for two bytes
+void xor(struct cpu_cpu *cpu, unsigned char *destination, unsigned char b){
+	(*destination) = (*destination) ^ b;
+	cpu->registers->flag_zero = (*destination) == 0;
+	cpu->registers->flag_carry = cpu->registers->flag_sub = cpu->registers->flag_halfcarry = 0;
+}
+
+// A XOR A -> A
+Status fn_xor_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->registers->a);
+	return OK;
+}
+
+// A XOR B -> A
+Status fn_xor_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->registers->b);
+	return OK;
+}
+
+// A XOR C -> A
+Status fn_xor_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->registers->c);
+	return OK;
+}
+
+// A XOR D -> A
+Status fn_xor_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->registers->d);
+	return OK;
+}
+
+// A XOR E -> A
+Status fn_xor_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->registers->e);
+	return OK;
+}
+
+// A XOR H -> A
+Status fn_xor_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->registers->h);
+	return OK;
+}
+
+// A XOR L -> A
+Status fn_xor_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->registers->l);
+	return OK;
+}
+
+// A XOR (HL) -> A
+Status fn_xor_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	xor(cpu, &cpu->registers->a, cpu->memory[cpu->registers->hl]);
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_00h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x00 - 1;
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_08h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x08 - 1;
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_10h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x10 - 1;
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_18h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x18 - 1;
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_20h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x20 - 1;
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_28h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x28 - 1;
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_30h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x30 - 1;
+	return OK;
+}
+
+// Pushes current addy to stack and does a reset jump
+Status fn_rst_38h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	pushStack(cpu, cpu->registers->pc);
+	cpu->registers->pc = 0x0000 + 0x38 - 1;
+	return OK;
 }
 
 Status fn_ld_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
@@ -747,6 +1006,14 @@ void destroyCPU(struct cpu_cpu* cpu){
 	free(cpu);
 }
 
+void printMemory(struct cpu_cpu *cpu, unsigned short start, unsigned short end){
+	printf("MEMORY DUMP:\n");
+	for(start; start <= end; start ++){
+		printf("[%0X]: %0X\n", start, cpu->memory[start]);
+	}
+	printf("END MEM DUMP\n");
+}
+
 void cpu_decode(struct cpu_cpu *cpu, struct cpu_instruction *instruction, unsigned char *arg1, unsigned char *arg2){
 	unsigned char instrOpcode = cpu->memory[cpu->registers->pc];
 	*instruction = instructions[instrOpcode];
@@ -769,6 +1036,7 @@ void cpu_run(struct cpu_cpu *cpu){
 		}
                 cpu_decode(cpu, &instruction, &arg1, &arg2);
 		printf("Executing instruction: %s [%0x: %0x] (%0X, %0X)\n", instruction.opcode, cpu->registers->pc, cpu->memory[cpu->registers->pc], cpu->memory[cpu->registers->pc + 1], cpu->memory[cpu->registers->pc + 2]);
+		if(cpu->registers->pc == 0x38) break;
 
 		if(instruction.function == NULL){
 			printf("[ERR]: Unimplemented instruction.\n");
@@ -776,7 +1044,7 @@ void cpu_run(struct cpu_cpu *cpu){
 		}else{
 			status = instruction.function(cpu, arg1, arg2);
 		}
-		cpu->registers->pc ++;
+		cpu->registers->pc += 1 + instruction.numArgs;
         }
 
 }
@@ -814,7 +1082,7 @@ unsigned char popStack(struct cpu_cpu *cpu){
 
 // Borrowed from: http://robdor.com/2016/08/10/gameboy-emulator-half-carry-flag/
 int getCarry(unsigned short a, unsigned short b, int bit){
-	if(bit == 3) return (((a & 0xf) + (b & 0xf)) & 0x10) == 0x10;	// 0xf = 0x1 << 3 (filling 1s); 0x10 = 0x1 << 4.
+	if(bit == 3 || 4) return (((a & 0xf) + (b & 0xf)) & 0x10) == 0x10;	// 0xf = 0x1 << 3 (filling 1s); 0x10 = 0x1 << 4.
 	if(bit == 11) return (((a & 0xf) + (b & 0xf)) & 0x10) > 0xf;
 	return (a + b) > 0xFFFF;
 }

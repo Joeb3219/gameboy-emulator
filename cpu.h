@@ -182,12 +182,50 @@ Status fn_ld_hl_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_hl_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_hl_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_ld_hl_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sub_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_sbc_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_jr_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_bc(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_de(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_inc_sp(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_call_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_xor_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_00h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_08h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_10h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_18h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_20h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_28h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_30h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_rst_38h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
 	{"LD BC,nn", 2, fn_ld_bc_nn},
 	{"LD (BC),A", 0, fn_ld_bc_a},
-	{"INC BC", 0, NULL},
+	{"INC BC", 0, fn_inc_bc},
 	{"INC B", 0, fn_inc_b},
 	{"DEC B", 0, fn_dec_b},
 	{"LD B,n", 1, fn_ld_b_n},
@@ -203,12 +241,12 @@ static const struct cpu_instruction instructions[256] = {
 	{"STOP", 0, fn_stop},
 	{"LD DE,nn", 2, fn_ld_de_nn},
 	{"LD (DE),A", 0, fn_ld_de_a},
-	{"INC DE", 0, NULL},
+	{"INC DE", 0, fn_inc_de},
 	{"INC D", 0, fn_inc_d},
 	{"DEC D", 0, fn_dec_d},
 	{"LD D,n", 1, fn_ld_d_n},
 	{"RL A", 0, NULL},
-	{"JR n", 1, NULL},
+	{"JR n", 1, fn_jr_n},
 	{"ADD HL,DE", 0, fn_add_hl_de},
 	{"LD A,(DE)", 0, NULL},
 	{"DEC DE", 0, fn_dec_bc},
@@ -219,7 +257,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"JR NZ,n", 1, NULL},
 	{"LD HL,nn", 2, fn_ld_hl_nn},
 	{"LDI (HL),A", 0, fn_ldi_hl_a},
-	{"INC HL", 0, NULL},
+	{"INC HL", 0, fn_inc_hl},
 	{"INC H", 0, fn_inc_h},
 	{"DEC H", 0, fn_dec_h},
 	{"LD H,n", 1, fn_ld_h_n},
@@ -235,7 +273,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"JR NC,n", 1, NULL},
 	{"LD SP,nn", 2, fn_ld_sp_nn},
 	{"LDD (HL),A", 0, NULL},
-	{"INC SP", 0, NULL},
+	{"INC SP", 0, fn_inc_sp},
 	{"INC (HL)", 0, NULL},
 	{"DEC (HL)", 0, NULL},
 	{"LD (HL),n", 1, NULL},
@@ -255,7 +293,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD B,H", 0, fn_ld_b_h},
 	{"LD B,L", 0, fn_ld_b_l},
 	{"LD B,(HL)", 0, fn_ld_b_hl},
-	{"LD B,A", 0, NULL},
+	{"LD B,A", 0, fn_ld_b_a},
 	{"LD C,B", 0, fn_ld_c_b},
 	{"LD C,C", 0, fn_ld_c_c},
 	{"LD C,D", 0, fn_ld_c_d},
@@ -263,7 +301,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"LD C,H", 0, fn_ld_c_h},
 	{"LD C,L", 0, fn_ld_c_l},
 	{"LD C,(HL)", 0, fn_ld_c_hl},
-	{"LD C,A", 0, NULL},
+	{"LD C,A", 0, fn_ld_c_a},
 	{"LD D,B", 0, fn_ld_d_b},
 	{"LD D,C", 0, fn_ld_d_c},
 	{"LD D,D", 0, fn_ld_d_d},
@@ -328,22 +366,22 @@ static const struct cpu_instruction instructions[256] = {
 	{"ADC A,L", 0, NULL},
 	{"ADC A,(HL)", 0, NULL},
 	{"ADC A,A", 0, NULL},
-	{"SUB A,B", 0, NULL},
-	{"SUB A,C", 0, NULL},
-	{"SUB A,D", 0, NULL},
-	{"SUB A,E", 0, NULL},
-	{"SUB A,H", 0, NULL},
-	{"SUB A,L", 0, NULL},
-	{"SUB A,(HL)", 0, NULL},
-	{"SUB A,A", 0, NULL},
-	{"SBC A,B", 0, NULL},
-	{"SBC A,C", 0, NULL},
-	{"SBC A,D", 0, NULL},
-	{"SBC A,E", 0, NULL},
-	{"SBC A,H", 0, NULL},
-	{"SBC A,L", 0, NULL},
-	{"SBC A,(HL)", 0, NULL},
-	{"SBC A,A", 0, NULL},
+	{"SUB A,B", 0, fn_sub_a_b},
+	{"SUB A,C", 0, fn_sub_a_c},
+	{"SUB A,D", 0, fn_sub_a_d},
+	{"SUB A,E", 0, fn_sub_a_e},
+	{"SUB A,H", 0, fn_sub_a_h},
+	{"SUB A,L", 0, fn_sub_a_l},
+	{"SUB A,(HL)", 0, fn_sub_a_hl},
+	{"SUB A,A", 0, fn_sub_a_a},
+	{"SBC A,B", 0, fn_sbc_a_b},
+	{"SBC A,C", 0, fn_sbc_a_c},
+	{"SBC A,D", 0, fn_sbc_a_d},
+	{"SBC A,E", 0, fn_sbc_a_e},
+	{"SBC A,H", 0, fn_sbc_a_h},
+	{"SBC A,L", 0, fn_sbc_a_l},
+	{"SBC A,(HL)", 0, fn_sbc_a_hl},
+	{"SBC A,A", 0, fn_sbc_a_a},
 	{"AND B", 0, NULL},
 	{"AND C", 0, NULL},
 	{"AND D", 0, NULL},
@@ -352,14 +390,14 @@ static const struct cpu_instruction instructions[256] = {
 	{"AND L", 0, NULL},
 	{"AND (HL)", 0, NULL},
 	{"AND A", 0, NULL},
-	{"XOR B", 0, NULL},
-	{"XOR C", 0, NULL},
-	{"XOR D", 0, NULL},
-	{"XOR E", 0, NULL},
-	{"XOR H", 0, NULL},
-	{"XOR L", 0, NULL},
-	{"XOR (HL)", 0, NULL},
-	{"XOR A", 0, NULL},
+	{"XOR B", 0, fn_xor_b},
+	{"XOR C", 0, fn_xor_c},
+	{"XOR D", 0, fn_xor_d},
+	{"XOR E", 0, fn_xor_e},
+	{"XOR H", 0, fn_xor_h},
+	{"XOR L", 0, fn_xor_l},
+	{"XOR (HL)", 0, fn_xor_hl},
+	{"XOR A", 0, fn_xor_a},
 	{"OR B", 0, NULL},
 	{"OR C", 0, NULL},
 	{"OR D", 0, NULL},
@@ -383,15 +421,15 @@ static const struct cpu_instruction instructions[256] = {
 	{"CALL NZ,nn", 2, NULL},
 	{"PUSH BC", 0, NULL},
 	{"ADD A,n", 1, NULL},
-	{"RST 0", 0, NULL},
+	{"RST 0", 0, fn_rst_00h},
 	{"RET Z", 0, NULL},
 	{"RET", 0, NULL},
 	{"JP Z,nn", 2, NULL},
 	{"Ext ops", 0, NULL},
 	{"CALL Z,nn", 2, NULL},
-	{"CALL nn", 2, NULL},
+	{"CALL nn", 2, fn_call_nn},
 	{"ADC A,n", 1, NULL},
-	{"RST 8", 0, NULL},
+	{"RST 8", 0, fn_rst_08h},
 	{"RET NC", 0, NULL},
 	{"POP DE", 0, NULL},
 	{"JP NC,nn", 2, NULL},
@@ -399,7 +437,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"CALL NC,nn", 2, NULL},
 	{"PUSH DE", 0, NULL},
 	{"SUB A,n", 1, NULL},
-	{"RST 10", 0, NULL},
+	{"RST 10", 0, fn_rst_10h},
 	{"RET C", 0, NULL},
 	{"RETI", 0, NULL},
 	{"JP C,nn", 2, NULL},
@@ -407,7 +445,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"CALL C,nn", 2, NULL},
 	{"XX", 0, NULL},
 	{"SBC A,n", 1, NULL},
-	{"RST 18", 0, NULL},
+	{"RST 18", 0, fn_rst_18h},
 	{"LDH (n),A", 1, NULL},
 	{"POP HL", 0, NULL},
 	{"LDH (C),A", 0, NULL},
@@ -415,7 +453,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"XX", 0, NULL},
 	{"PUSH HL", 0, NULL},
 	{"AND n", 1, NULL},
-	{"RST 20", 0, NULL},
+	{"RST 20", 0, fn_rst_20h},
 	{"ADD SP,d", 0, NULL},
 	{"JP (HL)", 0, NULL},
 	{"LD (nn),A", 2, NULL},
@@ -423,7 +461,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"XX", 0, NULL},
 	{"XX", 0, NULL},
 	{"XOR n", 1, NULL},
-	{"RST 28", 0, NULL},
+	{"RST 28", 0, fn_rst_28h},
 	{"LDH A,(n)", 1, NULL},
 	{"POP AF", 0, NULL},
 	{"XX", 0, NULL},
@@ -431,7 +469,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"XX", 0, NULL},
 	{"PUSH AF", 0, NULL},
 	{"OR n", 1, NULL},
-	{"RST 30", 0, NULL},
+	{"RST 30", 0, fn_rst_30h},
 	{"LDHL SP,d", 0, NULL},
 	{"LD SP,HL", 0, NULL},
 	{"LD A,(nn)", 2, NULL},
@@ -439,7 +477,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"XX", 0, NULL},
 	{"XX", 0, NULL},
 	{"CP n", 1, NULL},
-	{"RST 38", 0, NULL}
+	{"RST 38", 0, fn_rst_38h}
 };
 
 struct cpu_cpu* createCPU();
