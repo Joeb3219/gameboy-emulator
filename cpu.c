@@ -726,6 +726,85 @@ Status fn_jr_c_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
 }
 
+// Disable interrupts next tick
+Status fn_di(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->interruptDelayTicks = 1;
+	return OK;
+}
+
+// Sets mem[0xff00 + n] = cpu->registers->a
+Status fn_ldh_n_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[arg1 + 0xFF00] = cpu->registers->a;
+	return OK;
+}
+
+// Sets A = mem[0xff00 + n]
+Status fn_ldh_a_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->a = cpu->memory[arg1 + 0xFF00];
+	return OK;
+}
+
+// A generic compare method
+void compare(struct cpu_cpu *cpu, unsigned char a, unsigned char b){
+	// This is essentially subtract, but with no results at the end
+	// Since a is local and not an address, we can just call subtract without worrying
+	subtract(cpu, &a, b);
+}
+
+// Compare A with A
+Status fn_cp_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->registers->a);
+	return OK;
+}
+
+// Compare A with B
+Status fn_cp_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->registers->b);
+	return OK;
+}
+
+// Compare A with C
+Status fn_cp_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->registers->c);
+	return OK;
+}
+
+// Compare A with D
+Status fn_cp_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->registers->d);
+	return OK;
+}
+
+// Compare A with E
+Status fn_cp_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->registers->e);
+	return OK;
+}
+
+// Compare A with H
+Status fn_cp_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->registers->h);
+	return OK;
+}
+
+// Compare A with L
+Status fn_cp_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->registers->l);
+	return OK;
+}
+
+// Compare A with n
+Status fn_cp_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, arg1);
+	return OK;
+}
+
+// Compare A with (HL)
+Status fn_cp_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	compare(cpu, cpu->registers->a, cpu->memory[cpu->registers->hl]);
+	return OK;
+}
+
 Status fn_ld_a_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	cpu->registers->a = cpu->registers->a;
 	return OK;
@@ -1081,6 +1160,7 @@ void cpu_run(struct cpu_cpu *cpu){
 	struct cpu_instruction instruction;
 
         while(status == OK || status == STOP){
+		if(cpu->registers->interruptDelayTicks > 0) cpu->registers->interruptDelayTicks -= 1;
 		if(status == STOP){
 			printf("Waiting for input\n");
 			status = OK; // TODO: actually implement a button must be pressed.

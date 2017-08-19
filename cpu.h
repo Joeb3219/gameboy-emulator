@@ -37,6 +37,8 @@ struct cpu_registers{
 	unsigned short flag_sub;  // N
 	unsigned short flag_halfcarry; // H
 	unsigned short flag_carry; // C
+	unsigned short interrupts;
+	unsigned short interruptDelayTicks;
 };
 
 struct cpu_cpu{
@@ -228,6 +230,18 @@ Status fn_jr_nz_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_jr_z_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_jr_nc_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_jr_c_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_di(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ldh_n_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ldh_a_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_cp_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
@@ -413,15 +427,15 @@ static const struct cpu_instruction instructions[256] = {
 	{"OR H", 0, NULL},
 	{"OR L", 0, NULL},
 	{"OR (HL)", 0, NULL},
-	{"OR A", 0, NULL},
-	{"CP B", 0, NULL},
-	{"CP C", 0, NULL},
-	{"CP D", 0, NULL},
-	{"CP E", 0, NULL},
-	{"CP H", 0, NULL},
-	{"CP L", 0, NULL},
-	{"CP (HL)", 0, NULL},
-	{"CP A", 0, NULL},
+	{"OR A", 0, fn_cp_a},
+	{"CP B", 0, fn_cp_b},
+	{"CP C", 0, fn_cp_c},
+	{"CP D", 0, fn_cp_d},
+	{"CP E", 0, fn_cp_e},
+	{"CP H", 0, fn_cp_h},
+	{"CP L", 0, fn_cp_l},
+	{"CP (HL)", 0, fn_cp_hl},
+	{"CP A", 0, fn_cp_a},
 	{"RET NZ", 0, NULL},
 	{"POP BC", 0, NULL},
 	{"JP NZ,nn", 2, NULL},
@@ -454,7 +468,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"XX", 0, NULL},
 	{"SBC A,n", 1, NULL},
 	{"RST 18", 0, fn_rst_18h},
-	{"LDH (n),A", 1, NULL},
+	{"LDH (n),A", 1, fn_ldh_n_a},
 	{"POP HL", 0, NULL},
 	{"LDH (C),A", 0, NULL},
 	{"XX", 0, NULL},
@@ -470,10 +484,10 @@ static const struct cpu_instruction instructions[256] = {
 	{"XX", 0, NULL},
 	{"XOR n", 1, NULL},
 	{"RST 28", 0, fn_rst_28h},
-	{"LDH A,(n)", 1, NULL},
+	{"LDH A,(n)", 1, fn_ldh_a_n},
 	{"POP AF", 0, NULL},
 	{"XX", 0, NULL},
-	{"DI", 0, NULL},
+	{"DI", 0, fn_di},
 	{"XX", 0, NULL},
 	{"PUSH AF", 0, NULL},
 	{"OR n", 1, NULL},
@@ -484,7 +498,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"EI", 0, NULL},
 	{"XX", 0, NULL},
 	{"XX", 0, NULL},
-	{"CP n", 1, NULL},
+	{"CP n", 1, fn_cp_n},
 	{"RST 38", 0, fn_rst_38h}
 };
 
