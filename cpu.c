@@ -75,7 +75,7 @@ Status fn_dec_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 // Decrement B
 Status fn_dec_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	unsigned char val = cpu->registers->b;
-	cpu->registers->b -= 1;
+	cpu->registers->b = cpu->registers->b - 1;
 
 	cpu->registers->flag_zero = (val - 1 == 0);
 	cpu->registers->flag_sub = 1;
@@ -671,6 +671,58 @@ Status fn_rst_30h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 Status fn_rst_38h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	pushStack(cpu, cpu->registers->pc);
 	cpu->registers->pc = 0x0000 + 0x38 - 1;
+	return OK;
+}
+
+// A -> (HL), HL --.
+Status fn_ldd_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = cpu->registers->a;
+	cpu->registers->hl -= 1;
+	return OK;
+}
+
+// (HL) -> A, HL --.
+Status fn_ldd_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->a = cpu->memory[cpu->registers->hl];
+	cpu->registers->hl -= 1;
+	return OK;
+}
+
+// (HL) -> A, HL --.
+Status fn_ld_a_hlminus(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->a = cpu->memory[cpu->registers->hl];
+	cpu->registers->hl -= 1;
+	return OK;
+}
+
+// (HL) -> A, HL --.
+Status fn_ld_a_hld(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->a = cpu->memory[cpu->registers->hl];
+	cpu->registers->hl -= 1;
+	return OK;
+}
+
+// IF zero flag isn't set, jump relative
+Status fn_jr_nz_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	if(!cpu->registers->flag_zero) cpu->registers->pc += ((signed char) arg1);
+	return OK;
+}
+
+// IF zero flag is set, jump relative
+Status fn_jr_z_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	if(cpu->registers->flag_zero) cpu->registers->pc += ((signed char) arg1);
+	return OK;
+}
+
+// IF carry flag isn't set, jump relative
+Status fn_jr_nc_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	if(!cpu->registers->flag_carry) cpu->registers->pc += ((signed char) arg1);
+	return OK;
+}
+
+// IF carry flag is set, jump relative
+Status fn_jr_c_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	if(!cpu->registers->flag_carry) cpu->registers->pc += ((signed char) arg1);
 	return OK;
 }
 

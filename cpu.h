@@ -220,6 +220,14 @@ Status fn_rst_20h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_rst_28h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_rst_30h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_rst_38h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ldd_hl_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ldd_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_hlminus(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_a_hld(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_jr_nz_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_jr_z_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_jr_nc_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_jr_c_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
@@ -254,7 +262,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"DEC E", 0, fn_dec_e},
 	{"LD E,n", 1, fn_ld_e_n},
 	{"RRA", 0, fn_rra},
-	{"JR NZ,n", 1, NULL},
+	{"JR NZ,n", 1, fn_jr_nz_n},
 	{"LD HL,nn", 2, fn_ld_hl_nn},
 	{"LDI (HL),A", 0, fn_ldi_hl_a},
 	{"INC HL", 0, fn_inc_hl},
@@ -262,7 +270,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"DEC H", 0, fn_dec_h},
 	{"LD H,n", 1, fn_ld_h_n},
 	{"DAA", 0, NULL},
-	{"JR Z,n", 1, NULL},
+	{"JR Z,n", 1, fn_jr_z_n},
 	{"ADD HL,HL", 0, fn_add_hl_hl},
 	{"LDI A,(HL)", 0, NULL},
 	{"DEC HL", 0, fn_dec_hl},
@@ -270,21 +278,21 @@ static const struct cpu_instruction instructions[256] = {
 	{"DEC L", 0, fn_dec_l},
 	{"LD L,n", 1, fn_ld_l_n},
 	{"CPL", 0, fn_cpl},
-	{"JR NC,n", 1, NULL},
+	{"JR NC,n", 1, fn_jr_nc_n},
 	{"LD SP,nn", 2, fn_ld_sp_nn},
-	{"LDD (HL),A", 0, NULL},
+	{"LDD (HL),A", 0, fn_ldd_hl_a},
 	{"INC SP", 0, fn_inc_sp},
 	{"INC (HL)", 0, NULL},
 	{"DEC (HL)", 0, NULL},
 	{"LD (HL),n", 1, NULL},
 	{"SCF", 0, NULL},
-	{"JR C,n", 1, NULL},
+	{"JR C,n", 1, fn_jr_c_n},
 	{"ADD HL,SP", 0, fn_add_hl_sp},
-	{"LDD A,(HL)", 0, NULL},
+	{"LDD A,(HL)", 0, fn_ldd_a_hl},
 	{"DEC SP", 0, fn_dec_sp},
 	{"INC A", 0, fn_inc_a},
 	{"DEC A", 0, fn_dec_a},
-	{"LD A,n", 0, fn_ld_a_n},
+	{"LD A,n", 1, fn_ld_a_n},
 	{"CCF", 0, NULL},
 	{"LD B,C", 0, fn_ld_b_c},
 	{"LD B,B", 0, fn_ld_b_b},
