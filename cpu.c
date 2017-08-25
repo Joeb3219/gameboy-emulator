@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "cpu.h"
 
+int manualEnterMode = 0;
+
 unsigned short mergeBytesToShort(unsigned char a, unsigned char b){
 	return (((unsigned short) b) << 8) | a;
 }
@@ -311,6 +313,12 @@ Status fn_ld_hl_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
 }
 
+// Loads n -> (HL)
+Status fn_ld_hl_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[cpu->registers->hl] = arg1;
+	return OK;
+}
+
 // Loads nn -> SP
 Status fn_ld_sp_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	unsigned short val = mergeBytesToShort(arg1, arg2);
@@ -557,9 +565,195 @@ Status fn_inc_sp(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 
 // Calls a function by pushing the next addy to the stack and jumping to nn
 Status fn_call_nn(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	printf("Current instr: %0X, CALL!!! YAY!\n", cpu->registers->pc);
 	unsigned short address = mergeBytesToShort(arg1, arg2);
-	pushStack(cpu, cpu->registers->pc + 1);
+	unsigned short addressToPush = cpu->registers->pc;
+	pushStack(cpu, (addressToPush & 0xFF00) >> 8);
+	pushStack(cpu, addressToPush & 0x00FF);
 	cpu->registers->pc = address - 3; // Subtract 3 so we don't move an extra instruction ahead.
+	return ERR;
+}
+
+// A generic OR method for two bytes
+void or(struct cpu_cpu *cpu, unsigned char *destination, unsigned char b){
+	(*destination) = (*destination) | b;
+	cpu->registers->flag_zero = (*destination) == 0;
+	cpu->registers->flag_carry = cpu->registers->flag_sub = cpu->registers->flag_halfcarry = 0;
+}
+
+// A OR A -> A
+Status fn_or_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, cpu->registers->a);
+	return OK;
+}
+
+// A OR B -> A
+Status fn_or_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, cpu->registers->b);
+	return OK;
+}
+
+// A OR C -> A
+Status fn_or_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, cpu->registers->c);
+	return OK;
+}
+
+// A OR D -> A
+Status fn_or_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, cpu->registers->d);
+	return OK;
+}
+
+// A OR E -> A
+Status fn_or_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, cpu->registers->e);
+	return OK;
+}
+
+// A OR H -> A
+Status fn_or_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, cpu->registers->h);
+	return OK;
+}
+
+// A OR L -> A
+Status fn_or_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, cpu->registers->l);
+	return OK;
+}
+
+// A OR n -> A
+Status fn_or_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	or(cpu, &cpu->registers->a, arg2);
+	return OK;
+}
+
+// A generic SWAP method for a register
+void swap(struct cpu_cpu *cpu, unsigned char *destination){
+	unsigned char val = (*destination);
+	(*destination) = ((val & 0xF) << 4) | ((val & 0xF0) >> 4);
+	cpu->registers->flag_zero = (*destination) == 0;
+	cpu->registers->flag_carry = cpu->registers->flag_sub = cpu->registers->flag_halfcarry = 0;
+	return OK;
+}
+
+// SWAP A
+Status fn_swap_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->registers->a);
+	return OK;
+}
+
+// SWAP B
+Status fn_swap_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->registers->b);
+	return OK;
+}
+
+// SWAP C
+Status fn_swap_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->registers->c);
+	return OK;
+}
+
+// SWAP D
+Status fn_swap_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->registers->d);
+	return OK;
+}
+
+// SWAP E
+Status fn_swap_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->registers->e);
+	return OK;
+}
+
+// SWAP H
+Status fn_swap_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->registers->h);
+	return OK;
+}
+
+// SWAP L
+Status fn_swap_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->registers->l);
+	return OK;
+}
+
+// SWAP (HL)
+Status fn_swap_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	swap(cpu, &cpu->memory[cpu->registers->hl]);
+	return OK;
+}
+
+// EXT
+Status fn_ext(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	printf("Ext: %d %0x\n", arg1, arg1);
+	switch(arg1){
+		case 0x37: return fn_swap_a(cpu, arg1, arg2);
+		case 0x30: return fn_swap_b(cpu, arg1, arg2);
+		case 0x31: return fn_swap_c(cpu, arg1, arg2);
+		case 0x32: return fn_swap_d(cpu, arg1, arg2);
+		case 0x33: return fn_swap_e(cpu, arg1, arg2);
+		case 0x34: return fn_swap_h(cpu, arg1, arg2);
+		case 0x35: return fn_swap_l(cpu, arg1, arg2);
+		case 0x36: return fn_swap_hl(cpu, arg1, arg2);
+		default: return ERR;
+	}
+}
+
+// A generic AND method for two bytes
+void and(struct cpu_cpu *cpu, unsigned char *destination, unsigned char b){
+	(*destination) = (*destination) & b;
+	cpu->registers->flag_zero = (*destination) == 0;
+	cpu->registers->flag_carry = cpu->registers->flag_sub = cpu->registers->flag_halfcarry = 0;
+}
+
+// A AND A -> A
+Status fn_and_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, cpu->registers->a);
+	return OK;
+}
+
+// A AND B -> A
+Status fn_and_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, cpu->registers->b);
+	return OK;
+}
+
+// A AND C -> A
+Status fn_and_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, cpu->registers->c);
+	return OK;
+}
+
+// A AND D -> A
+Status fn_and_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, cpu->registers->d);
+	return OK;
+}
+
+// A AND E -> A
+Status fn_and_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, cpu->registers->e);
+	return OK;
+}
+
+// A AND H -> A
+Status fn_and_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, cpu->registers->h);
+	return OK;
+}
+
+// A AND L -> A
+Status fn_and_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, cpu->registers->l);
+	return OK;
+}
+
+// A AND N -> A
+Status fn_and_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	and(cpu, &cpu->registers->a, arg1);
 	return OK;
 }
 
@@ -732,9 +926,22 @@ Status fn_di(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
 }
 
+// Enable interrupts next tick
+Status fn_ei(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->interruptDelayTicks = 1;
+	return OK;
+}
+
 // Sets mem[0xff00 + n] = cpu->registers->a
 Status fn_ldh_n_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	cpu->memory[arg1 + 0xFF00] = cpu->registers->a;
+	return OK;
+}
+
+// Sets A = mem[hl]; hl ++
+Status fn_ldi_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->a = cpu->memory[cpu->registers->hl];
+	cpu->registers->hl = cpu->registers->hl + 1;
 	return OK;
 }
 
@@ -802,6 +1009,11 @@ Status fn_cp_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 // Compare A with (HL)
 Status fn_cp_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	compare(cpu, cpu->registers->a, cpu->memory[cpu->registers->hl]);
+	return OK;
+}
+
+Status fn_ld_nn_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->registers->a = cpu->memory[mergeBytesToShort(arg1, arg2)];
 	return OK;
 }
 
@@ -1125,6 +1337,17 @@ Status fn_ld_l_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
 	return OK;
 }
 
+Status fn_ldh_c_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	cpu->memory[0xFF00 + cpu->registers->c] = cpu->registers->a;
+	return OK;
+}
+
+Status fn_ret(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2){
+	unsigned char a = popStack(cpu), b = popStack(cpu);
+	cpu->registers->pc = mergeBytesToShort(a, b) - 1;
+	return OK;
+}
+
 struct cpu_cpu* createCPU(){
 	struct cpu_cpu *cpu = malloc(sizeof(struct cpu_cpu));
 	cpu->registers = malloc(sizeof(struct cpu_registers));
@@ -1160,6 +1383,11 @@ void cpu_run(struct cpu_cpu *cpu){
 	struct cpu_instruction instruction;
 
         while(status == OK || status == STOP){
+		if(manualEnterMode == 1){
+			if(getchar() == '\n'){}
+			printStack(cpu);
+		}
+		display();
 		if(cpu->registers->interruptDelayTicks > 0) cpu->registers->interruptDelayTicks -= 1;
 		if(status == STOP){
 			printf("Waiting for input\n");
@@ -1175,6 +1403,13 @@ void cpu_run(struct cpu_cpu *cpu){
 			status = ERR;
 		}else{
 			status = instruction.function(cpu, arg1, arg2);
+		}
+		// Temporary
+		if(cpu->registers->pc == 0x2b2){
+			cpu->memory[0xFF44] = 0X94;
+		}
+		if(cpu->registers->pc == 0x2A05){
+			manualEnterMode = 1;
 		}
 		cpu->registers->pc += 1 + instruction.numArgs;
         }
@@ -1199,6 +1434,10 @@ void printRegisters(struct cpu_registers* registers){
 	printf("PC: %0x\n", registers->pc);
 	printf("FLAG: Z: %x, S: %x, HC: %x, C: %x\n", registers->flag_zero, registers->flag_sub, registers->flag_halfcarry, registers->flag_carry);
 	printf("== End Registers ==\n");
+}
+
+void printStack(struct cpu_cpu *cpu){
+	printf("Stack: %0x %0x\n", cpu->memory[cpu->registers->sp], cpu->memory[cpu->registers->sp + 1]);
 }
 
 void pushStack(struct cpu_cpu *cpu, unsigned char value){

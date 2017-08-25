@@ -38,6 +38,7 @@ struct cpu_registers{
 	unsigned short flag_halfcarry; // H
 	unsigned short flag_carry; // C
 	unsigned short interrupts;
+	unsigned short interrupts_enabled;
 	unsigned short interruptDelayTicks;
 };
 
@@ -242,6 +243,37 @@ Status fn_cp_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_cp_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_cp_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 Status fn_cp_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_hl_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ld_nn_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ldi_a_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ldh_c_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_or_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ret(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ei(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_and_n(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_a(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_b(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_c(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_d(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_e(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_h(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_l(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_swap_hl(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
+Status fn_ext(struct cpu_cpu *cpu, unsigned char arg1, unsigned char arg2);
 
 static const struct cpu_instruction instructions[256] = {
 	{"NOP", 0, fn_nop},
@@ -286,7 +318,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"DAA", 0, NULL},
 	{"JR Z,n", 1, fn_jr_z_n},
 	{"ADD HL,HL", 0, fn_add_hl_hl},
-	{"LDI A,(HL)", 0, NULL},
+	{"LDI A,(HL)", 0, fn_ldi_a_hl},
 	{"DEC HL", 0, fn_dec_hl},
 	{"INC L", 0, fn_inc_l},
 	{"DEC L", 0, fn_dec_l},
@@ -298,7 +330,7 @@ static const struct cpu_instruction instructions[256] = {
 	{"INC SP", 0, fn_inc_sp},
 	{"INC (HL)", 0, NULL},
 	{"DEC (HL)", 0, NULL},
-	{"LD (HL),n", 1, NULL},
+	{"LD (HL),n", 1, fn_ld_hl_n},
 	{"SCF", 0, NULL},
 	{"JR C,n", 1, fn_jr_c_n},
 	{"ADD HL,SP", 0, fn_add_hl_sp},
@@ -404,14 +436,14 @@ static const struct cpu_instruction instructions[256] = {
 	{"SBC A,L", 0, fn_sbc_a_l},
 	{"SBC A,(HL)", 0, fn_sbc_a_hl},
 	{"SBC A,A", 0, fn_sbc_a_a},
-	{"AND B", 0, NULL},
-	{"AND C", 0, NULL},
-	{"AND D", 0, NULL},
-	{"AND E", 0, NULL},
-	{"AND H", 0, NULL},
-	{"AND L", 0, NULL},
+	{"AND B", 0, fn_and_b},
+	{"AND C", 0, fn_and_c},
+	{"AND D", 0, fn_and_d},
+	{"AND E", 0, fn_and_e},
+	{"AND H", 0, fn_and_h},
+	{"AND L", 0, fn_and_l},
 	{"AND (HL)", 0, NULL},
-	{"AND A", 0, NULL},
+	{"AND A", 0, fn_and_a},
 	{"XOR B", 0, fn_xor_b},
 	{"XOR C", 0, fn_xor_c},
 	{"XOR D", 0, fn_xor_d},
@@ -420,14 +452,14 @@ static const struct cpu_instruction instructions[256] = {
 	{"XOR L", 0, fn_xor_l},
 	{"XOR (HL)", 0, fn_xor_hl},
 	{"XOR A", 0, fn_xor_a},
-	{"OR B", 0, NULL},
-	{"OR C", 0, NULL},
-	{"OR D", 0, NULL},
-	{"OR E", 0, NULL},
-	{"OR H", 0, NULL},
-	{"OR L", 0, NULL},
+	{"OR B", 0, fn_or_b},
+	{"OR C", 0, fn_or_c},
+	{"OR D", 0, fn_or_d},
+	{"OR E", 0, fn_or_e},
+	{"OR H", 0, fn_or_h},
+	{"OR L", 0, fn_or_l},
 	{"OR (HL)", 0, NULL},
-	{"OR A", 0, fn_cp_a},
+	{"OR A", 0, fn_or_a},
 	{"CP B", 0, fn_cp_b},
 	{"CP C", 0, fn_cp_c},
 	{"CP D", 0, fn_cp_d},
@@ -445,9 +477,9 @@ static const struct cpu_instruction instructions[256] = {
 	{"ADD A,n", 1, NULL},
 	{"RST 0", 0, fn_rst_00h},
 	{"RET Z", 0, NULL},
-	{"RET", 0, NULL},
+	{"RET", 0, fn_ret},
 	{"JP Z,nn", 2, NULL},
-	{"Ext ops", 0, NULL},
+	{"Ext ops", 1, fn_ext},
 	{"CALL Z,nn", 2, NULL},
 	{"CALL nn", 2, fn_call_nn},
 	{"ADC A,n", 1, NULL},
@@ -470,15 +502,15 @@ static const struct cpu_instruction instructions[256] = {
 	{"RST 18", 0, fn_rst_18h},
 	{"LDH (n),A", 1, fn_ldh_n_a},
 	{"POP HL", 0, NULL},
-	{"LDH (C),A", 0, NULL},
+	{"LDH (C),A", 0, fn_ldh_c_a},
 	{"XX", 0, NULL},
 	{"XX", 0, NULL},
 	{"PUSH HL", 0, NULL},
-	{"AND n", 1, NULL},
+	{"AND n", 1, fn_and_n},
 	{"RST 20", 0, fn_rst_20h},
 	{"ADD SP,d", 0, NULL},
 	{"JP (HL)", 0, NULL},
-	{"LD (nn),A", 2, NULL},
+	{"LD (nn),A", 2, fn_ld_nn_a},
 	{"XX", 0, NULL},
 	{"XX", 0, NULL},
 	{"XX", 0, NULL},
@@ -490,12 +522,12 @@ static const struct cpu_instruction instructions[256] = {
 	{"DI", 0, fn_di},
 	{"XX", 0, NULL},
 	{"PUSH AF", 0, NULL},
-	{"OR n", 1, NULL},
+	{"OR n", 1, fn_or_n},
 	{"RST 30", 0, fn_rst_30h},
 	{"LDHL SP,d", 0, NULL},
 	{"LD SP,HL", 0, NULL},
 	{"LD A,(nn)", 2, NULL},
-	{"EI", 0, NULL},
+	{"EI", 0, fn_ei},
 	{"XX", 0, NULL},
 	{"XX", 0, NULL},
 	{"CP n", 1, fn_cp_n},

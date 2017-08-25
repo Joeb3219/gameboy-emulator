@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "main.h"
 #include "cpu.h"
+#include "gpu.h"
 
 #define MEMORY_ROM_0_START 0x0000
 #define MEMORY_ROM_B_START 0x4000
@@ -103,9 +104,15 @@ int main(int argc, char** argv){
 
 	printf("Loading successful: Now executing the game.\n");
 
+//	createDisplay(&cpu->memory);
+
+//	display();
+
 	cpu_run(cpu);
 
 	destroyCPU(cpu);
+
+//	destroyDisplay();
 
 	return 0;
 
